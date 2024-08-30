@@ -9,24 +9,22 @@ import (
 )
 
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
-	w.Header().Add("Server", "Go")
-
 	snippets, err := app.snippets.Latest()
 	if err != nil {
-		app.serverError(w,r,err)
+		app.serverError(w, r, err)
 		return
 	}
 
 	data := app.newTemplateDate(r)
 	data.Snippets = snippets
 
-	app.render(w,r,http.StatusOK, "home.tmpl.html", data)
+	app.render(w, r, http.StatusOK, "home.tmpl.html", data)
 }
 
 func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.PathValue("id"))
 	if err != nil || id < 1 {
-		http.NotFound(w,r)
+		http.NotFound(w, r)
 		return
 	}
 
@@ -43,7 +41,7 @@ func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
 	data := app.newTemplateDate(r)
 	data.Snippet = snippet
 
-	app.render(w,r,http.StatusOK, "view.tmpl.html", data)
+	app.render(w, r, http.StatusOK, "view.tmpl.html", data)
 }
 
 func (app *application) snippetCreateForm(w http.ResponseWriter, r *http.Request) {
@@ -59,7 +57,6 @@ func (app *application) snippetCreatePost(w http.ResponseWriter, r *http.Request
 	if err != nil {
 		app.serverError(w, r, err)
 	}
-	
 
 	http.Redirect(w, r, fmt.Sprintf("/snippet/view/%d", id), http.StatusSeeOther)
 }

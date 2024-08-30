@@ -202,8 +202,56 @@ If the type that you’re yielding between {{ }} tags has methods defined agains
 <span>{{.Snippet.Created.AddDate 0 6 0}}</span>
 ```
 
-## Template Actions
+**Template Actions**
 
 ```html
 {{ for, if, eq, and, len, etc... }}
+```
+
+**Custom Template Functions**
+
+Create a map of keys to functions that can be used inside of the html tempalates
+
+```go
+var functions = template.FuncMap{
+    "humanDate": humanDate,
+}
+
+func newTemplateCache() (map[string]*template.Template, error) {
+  ...
+  for _, page := range pages {
+    ...
+    // Register function map with template set
+    ts, err := template.New(name).Funcs(functions).ParseFiles("./ui/html/base.tmpl")
+    ...
+  }
+  ...
+}
+```
+
+## Middleware
+
+Positioning middleware before the servemux will make it act on every request the application receives.
+
+```
+middleware → servemux → application handler
+```
+
+Postitioning the middleware after the servemux chain (by wrapping the handler) will cause middleware to only act on specific route.
+
+```
+servemux → middleware → application handler
+```
+
+- panic recovery with `recover()`
+
+Template for creating a middleware:
+
+```go
+func (app *application) myMiddlware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+    // middleware logic here...
+		next.ServeHTTP(w,r)
+	})
+}
 ```
